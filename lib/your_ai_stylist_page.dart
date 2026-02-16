@@ -23,11 +23,7 @@ class _YourAiStylistPageState extends State<YourAiStylistPage>
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     final deviceOrientation = MediaQuery.of(context).orientation;
-    print(deviceOrientation);
 
     return Scaffold(
       body: Container(
@@ -43,24 +39,26 @@ class _YourAiStylistPageState extends State<YourAiStylistPage>
         ),
 
         child: Container(
-          child: deviceOrientation == Orientation.portrait
+          child: myColumn(1, 1),
+          /*  child: deviceOrientation == Orientation.portrait
               ? myColumn(screenHeight, screenWidth)
-              : myRow(screenHeight, screenWidth),
+              : myRow(screenHeight, screenWidth), */
         ),
       ),
     );
   }
 
+  //BURA DİKE EKRANIN CONTAİNERLARININ BİRİM GENİŞLİK VE UZUNLUKLARINI VERİYOR ORANSAL OLARAK
   Column myColumn(double screenHeight, double screenWidth) {
     return Column(
       children: [
-        Center(child: ticketContainer(screenHeight, screenWidth, 3)),
+        Center(child: ticketContainer(0.66, 0.525)),
 
-        Row(
+        Column(
           children: [
             Container(
-              height: screenHeight * 0.1,
-              width: screenWidth * 0.8,
+              height: MediaQuery.of(context).size.height * 0.075,
+              width: MediaQuery.of(context).size.width * 1,
               child: Text(
                 "Your AI Stylist",
                 style: TextStyle(
@@ -69,30 +67,60 @@ class _YourAiStylistPageState extends State<YourAiStylistPage>
                   fontWeight: FontWeight.w600,
                   fontSize: 40,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
             Container(
-              height: screenHeight * 0.1,
-              width: screenWidth * 0.2,
-              child: Text(
-                "Get personalized outfit recommendations based on your wardrobe, mood, and the weather",
-                style: TextStyle(
-                  color: Color(0xFF1A1A1A),
-                  fontFamily: "PT_Serif",
-                  fontWeight: FontWeight.w600,
-                  fontSize: 40,
+              height: MediaQuery.of(context).size.height * 0.125,
+              width: MediaQuery.of(context).size.width * 0.8,
+
+              child: Center(
+                child: Text(
+                  "Get personalized outfit recommendations based on your wardrobe, mood, and the weather",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 91, 93, 93),
+                    fontFamily: "Roboto",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
           ],
         ),
 
+        //buaraya animasyon gelecek
         Container(
-          height: screenHeight * 0.09,
-          width: screenWidth * 0.8,
+          height: MediaQuery.of(context).size.height * 0.05,
+          width: MediaQuery.of(context).size.width * 0.05,
+          decoration: BoxDecoration(
+            color: Color(0xFFDB7964),
+            shape: BoxShape.circle,
+
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromARGB(
+                  255,
+                  216,
+                  135,
+                  117,
+                ).withValues(alpha: 0.2),
+                spreadRadius: 20,
+                blurRadius: 20,
+              ),
+            ],
+          ),
+          alignment: AlignmentGeometry.center,
+        ),
+
+        Container(
+          height: MediaQuery.of(context).size.height * 0.09,
+          width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
             color: Color(0xFFDB7964),
             borderRadius: BorderRadius.circular(50),
+
             boxShadow: [
               BoxShadow(
                 color: Color.fromARGB(
@@ -124,11 +152,27 @@ class _YourAiStylistPageState extends State<YourAiStylistPage>
             ),
           ),
         ),
+
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.125,
+          width: MediaQuery.of(context).size.width * 1,
+          child: Text(
+            "I already have an account",
+            style: TextStyle(
+              color: Color.fromARGB(255, 91, 93, 93),
+              fontFamily: "Roboco",
+              fontWeight: FontWeight.w400,
+              fontSize: 17,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
       ],
     );
   }
 
-  Row myRow(double screenHeight, double screenWidth) {
+  /* 
+  Row myRow(double sH, double sW) {
     return Row(
       children: [
         Center(child: ticketContainer(screenHeight, screenWidth, 5)),
@@ -151,15 +195,11 @@ class _YourAiStylistPageState extends State<YourAiStylistPage>
       ],
     );
   }
-
-  Container ticketContainer(
-    double screenHeight,
-    double screenWidth,
-    double size,
-  ) {
+ */
+  Container ticketContainer(double sW, double sH) {
     return Container(
-      height: screenHeight * 0.65,
-      width: screenWidth * 0.7,
+      height: MediaQuery.of(context).size.height * sH,
+      width: MediaQuery.of(context).size.width * sW,
       decoration: BoxDecoration(
         color: Color(0xFFDB7964),
         shape: BoxShape.circle,
@@ -173,7 +213,9 @@ class _YourAiStylistPageState extends State<YourAiStylistPage>
       ),
       child: Icon(
         Icons.label_outline_rounded,
-        size: (screenWidth / size),
+        size:
+            (MediaQuery.of(context).size.width /
+            (MediaQuery.of(context).size.width / 120)),
         color: Colors.white,
       ),
     );
