@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class YourAiStylistPage extends StatefulWidget {
   const YourAiStylistPage({super.key});
@@ -10,7 +9,6 @@ class YourAiStylistPage extends StatefulWidget {
 
 class _YourAiStylistPageState extends State<YourAiStylistPage>
     with SingleTickerProviderStateMixin {
-      
   @override
   Widget build(BuildContext context) {
     final deviceOrientation = MediaQuery.of(context).orientation;

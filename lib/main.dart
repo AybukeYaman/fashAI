@@ -1,5 +1,5 @@
-import 'package:fashai/your_ai_stylist_page.dart';
-import 'package:fashai/your_ai_stylist_page.dart';
+import 'package:fashai/screens/login/login_page.dart';
+import 'package:fashai/screens/login/your_ai_stylist_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,9 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FashAI',
-
-      home: YourAiStylistPage(),
+      title: 'WearDrop',
+      home: LoginPage(),
     );
   }
 }
