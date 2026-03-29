@@ -1,5 +1,5 @@
 import 'package:flutter/painting.dart';
-import 'package:fashai/t_store/utils/constants/sizes.dart';
+import 'package:fashai/src/core/constants/sizes.dart';
 
 class TSpacingStyle {
   static const EdgeInsetsGeometry paddingWithAppBarHeight = EdgeInsets.only(

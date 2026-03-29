@@ -1,5 +1,10 @@
-import 'package:fashai/screens/login/login_page.dart';
-import 'package:fashai/screens/login/your_ai_stylist_page.dart';
+import 'package:fashai/src/core/routes/app_routes.dart';
+import 'package:fashai/src/core/themes/app_colors.dart';
+import 'package:fashai/src/features/home/presentation/home_model.dart';
+import 'package:fashai/src/features/login/presentation/login_view.dart';
+import 'package:fashai/src/features/main/presentation/main_view.dart';
+import 'package:fashai/src/features/onboarding/presentation/your_ai_stylist_page.dart';
+import 'package:fashai/src/features/outfit/presentation/outfit_detail_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,8 +18,32 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'WearDrop',
-      home: LoginPage(),
+      title: 'Combime',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.dustyRose,
+          brightness: Brightness.light,
+        ),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.coral,
+          brightness: Brightness.dark,
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      initialRoute: AppRoutes.onboarding,
+      routes: {
+        AppRoutes.onboarding: (context) => const YourAiStylistPage(),
+        AppRoutes.login: (context) => const LoginPage(),
+        AppRoutes.home: (context) => const MainPage(),
+        AppRoutes.main: (context) => const MainPage(),
+        AppRoutes.outfitDetail: (context) {
+          final outfit =
+              ModalRoute.of(context)!.settings.arguments as OutfitModel;
+          return OutfitDetailPage(outfit: outfit);
+        },
+      },
     );
   }
 }

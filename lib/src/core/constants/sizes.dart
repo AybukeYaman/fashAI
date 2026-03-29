@@ -34,9 +34,9 @@ class TSizes {
   static const double spaceBtwSections = 32.0;
 
   // Border radius
-  static const double borderRadiusSm = 4.0;
-  static const double borderRadiusMd = 8.0;
-  static const double borderRadiusLg = 12.0;
+  static const double borderRadiusSm = 10.0;
+  static const double borderRadiusMd = 20.0;
+  static const double borderRadiusLg = 30.0;
 
   // Divider height
   static const double dividerHeight = 1.0;
