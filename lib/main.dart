@@ -5,6 +5,9 @@ import 'package:fashai/src/features/login/presentation/login_view.dart';
 import 'package:fashai/src/features/main/presentation/main_view.dart';
 import 'package:fashai/src/features/onboarding/presentation/your_ai_stylist_page.dart';
 import 'package:fashai/src/features/outfit/presentation/outfit_detail_view.dart';
+import 'package:fashai/src/features/profile/presentation/app_settings_view.dart';
+import 'package:fashai/src/features/profile/presentation/cycle_settings_view.dart';
+import 'package:fashai/src/features/profile/presentation/style_preferences_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -38,6 +41,9 @@ class MyApp extends StatelessWidget {
         AppRoutes.login: (context) => const LoginPage(),
         AppRoutes.home: (context) => const MainPage(),
         AppRoutes.main: (context) => const MainPage(),
+        AppRoutes.stylePreferences: (context) => const StylePreferencesPage(),
+        AppRoutes.cycleSettings: (context) => const CycleSettingsPage(),
+        AppRoutes.appSettings: (context) => const AppSettingsPage(),
         AppRoutes.outfitDetail: (context) {
           final outfit =
               ModalRoute.of(context)!.settings.arguments as OutfitModel;

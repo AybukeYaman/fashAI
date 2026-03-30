@@ -28,6 +28,15 @@ class AppColors {
 
   static const Color dustyRose = Color(0xFFDB7964);
 
+  /// Profile avatar + sustainability card green
+  static const Color sageGreen = Color(0xFF8A9E7E);
+
+  /// Pro member badge background
+  static const Color proMemberBg = Color(0xFFF5E6C8);
+
+  /// Pro member badge text
+  static const Color proMemberText = Color(0xFF8B6914);
+
   // ── Gradient ──────────────────────────────────────────────────────────────
   static const LinearGradient heroGradient = LinearGradient(
     colors: [Color(0xFFF5C1B3), beige],
