@@ -604,21 +604,21 @@ class _LoginPageState extends State<LoginPage> {
               child: OutlinedButton.icon(
                 onPressed: () => Navigator.pushNamed(context, AppRoutes.main),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: TSizes.lg),
-                  side: const BorderSide(color: AppColors.grey),
+                  padding: EdgeInsets.symmetric(vertical: TSizes.lg),
+                  side: BorderSide(color: AppColors.grey),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(TSizes.borderRadiusMd),
                   ),
                   backgroundColor: AppColors.white,
                 ),
-                icon: const Image(
+                icon: Image(
                   width: TSizes.iconMd,
                   height: TSizes.iconMd,
                   image: AssetImage(TImages.facebook),
                 ),
                 label: Text(
                   Ttexts.orSignInWithFacebook,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.charcoal,
                     fontSize: TSizes.fontSizeSM,
                   ),

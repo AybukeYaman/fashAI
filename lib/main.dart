@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.login: (context) => const LoginPage(),
         AppRoutes.home: (context) => const MainPage(),
         AppRoutes.main: (context) => const MainPage(),
-        AppRoutes.stylePreferences: (context) => const StylePreferencesPage(),
+        AppRoutes.stylePreferences: (context) => StylePreferencesPage(),
         AppRoutes.cycleSettings: (context) => const CycleSettingsPage(),
         AppRoutes.appSettings: (context) => const AppSettingsPage(),
         AppRoutes.outfitDetail: (context) {

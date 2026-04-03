@@ -2,6 +2,7 @@ import 'package:fashai/src/core/constants/sizes.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
 import 'package:fashai/src/features/home/presentation/home_view.dart';
 import 'package:fashai/src/features/profile/presentation/profile_view.dart';
+import 'package:fashai/src/features/profile/presentation/style_preferences_view.dart';
 import 'package:fashai/src/features/styleAI/presentation/style_ai_view.dart';
 import 'package:fashai/src/features/wardrobe/presentation/wardrobe_view.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,8 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  
+
   Widget _buildFloatingNavBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -41,6 +44,7 @@ class _MainPageState extends State<MainPage> {
         TSizes.defaultSpace,
       ),
       child: Container(
+        ////////////
         height: 64,
         padding: const EdgeInsets.all(TSizes.xs),
         decoration: BoxDecoration(

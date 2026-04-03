@@ -18,7 +18,7 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: AppColors.beige,
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: PlatformUtils.scrollPhysics(context),
+          //physics: PlatformUtils.scrollPhysics(context),
           padding: EdgeInsets.symmetric(
             horizontal: PlatformUtils.horizontalPadding(context),
             vertical: TSizes.xl,
@@ -135,8 +135,7 @@ class ProfilePage extends StatelessWidget {
                 padding: const EdgeInsets.all(TSizes.xl),
                 decoration: BoxDecoration(
                   color: AppColors.sageGreen,
-                  borderRadius:
-                      BorderRadius.circular(TSizes.cardRadiusLg),
+                  borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,8 +161,7 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                       child: LinearProgressIndicator(
                         value: profile.sustainabilityScore,
-                        backgroundColor:
-                            AppColors.white.withValues(alpha: 0.3),
+                        backgroundColor: AppColors.white.withValues(alpha: 0.3),
                         valueColor: const AlwaysStoppedAnimation<Color>(
                           AppColors.white,
                         ),
@@ -203,8 +201,8 @@ class ProfilePage extends StatelessWidget {
                 icon: "🎨",
                 title: Ttexts.stylePreferences,
                 subtitle: Ttexts.stylePreferencesSubtitle,
-                onTap: () => Navigator.pushNamed(
-                    context, AppRoutes.stylePreferences),
+                onTap: () =>
+                    Navigator.pushNamed(context, AppRoutes.stylePreferences),
               ),
               const SizedBox(height: TSizes.md),
               _buildSettingsRow(
@@ -233,10 +231,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({
-    required String value,
-    required String label,
-  }) {
+  Widget _buildStatCard({required String value, required String label}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -307,8 +302,7 @@ class ProfilePage extends StatelessWidget {
               height: 44,
               decoration: BoxDecoration(
                 color: AppColors.lightCoral,
-                borderRadius:
-                    BorderRadius.circular(TSizes.borderRadiusMd),
+                borderRadius: BorderRadius.circular(TSizes.borderRadiusMd),
               ),
               child: Center(
                 child: Text(icon, style: const TextStyle(fontSize: 20)),

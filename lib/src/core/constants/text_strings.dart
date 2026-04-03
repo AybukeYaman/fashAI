@@ -69,6 +69,7 @@ class Ttexts {
 
   // -- Profile Page
   static const String stylePreferences = "Style Preferences";
+  static const String sytlePre_AppBar = "How Dou You Want To Look";
   static const String stylePreferencesSubtitle =
       "Colors, aesthetics, body type";
   static const String cycleSettings = "Cycle Settings";

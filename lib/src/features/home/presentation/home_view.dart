@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: AppColors.beige,
       body: CustomScrollView(
-        physics: PlatformUtils.scrollPhysics(context),
         slivers: <Widget>[
           // 1. APP BAR
           SliverAppBar(
@@ -341,28 +340,28 @@ class _HomePageState extends State<HomePage> {
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.06),
                         blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        offset:  Offset(0, 2),
                       ),
                     ],
                   ),
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(TSizes.md),
+                        padding:  EdgeInsets.all(TSizes.md),
                         decoration: BoxDecoration(
                           color: AppColors.lightCoral,
                           borderRadius: BorderRadius.circular(
                             TSizes.borderRadiusSm,
                           ),
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.share_outlined,
                           color: AppColors.coral,
                           size: TSizes.iconMd,
                         ),
                       ),
-                      const SizedBox(width: TSizes.md),
-                      const Column(
+                       SizedBox(width: TSizes.md),
+                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
