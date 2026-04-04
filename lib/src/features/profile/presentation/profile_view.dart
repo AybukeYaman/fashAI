@@ -18,7 +18,7 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: AppColors.beige,
       body: SafeArea(
         child: SingleChildScrollView(
-          //physics: PlatformUtils.scrollPhysics(context),
+          physics: PlatformUtils.scrollPhysics(context),
           padding: EdgeInsets.symmetric(
             horizontal: PlatformUtils.horizontalPadding(context),
             vertical: TSizes.xl,
@@ -69,9 +69,9 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: TSizes.sm),
 
-              // Subtitle
+              // Subtitle + location
               Text(
-                profile.subtitle,
+                "${profile.subtitle} • ${profile.location}",
                 style: const TextStyle(
                   color: AppColors.warmGray,
                   fontSize: TSizes.fontSizeSM,
@@ -127,72 +127,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: TSizes.spaceBtwItems),
-
-              // Sustainability Score card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(TSizes.xl),
-                decoration: BoxDecoration(
-                  color: AppColors.sageGreen,
-                  borderRadius: BorderRadius.circular(TSizes.cardRadiusLg),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Text("🌿", style: TextStyle(fontSize: 18)),
-                        const SizedBox(width: TSizes.sm),
-                        Text(
-                          Ttexts.sustainabilityScore,
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: TSizes.fontSizeMD,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: TSizes.md),
-
-                    // Progress bar
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: LinearProgressIndicator(
-                        value: profile.sustainabilityScore,
-                        backgroundColor: AppColors.white.withValues(alpha: 0.3),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.white,
-                        ),
-                        minHeight: 8,
-                      ),
-                    ),
-                    const SizedBox(height: TSizes.md),
-
-                    // Stats text
-                    Row(
-                      children: [
-                        Text(
-                          "${(profile.sustainabilityScore * 100).toInt()}% ${Ttexts.wardrobeUtilized}",
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: TSizes.fontSizeXS,
-                          ),
-                        ),
-                        const SizedBox(width: TSizes.md),
-                        Text(
-                          "↑ ${profile.sustainabilityMonthlyGrowth}% ${Ttexts.thisMonth}",
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: TSizes.fontSizeXS,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: TSizes.spaceBtwSections),
 
               // Settings rows
@@ -231,7 +165,10 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({required String value, required String label}) {
+  Widget _buildStatCard({
+    required String value,
+    required String label,
+  }) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(

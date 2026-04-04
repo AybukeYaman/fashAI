@@ -2,10 +2,10 @@ import 'package:fashai/src/core/constants/sizes.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
 import 'package:fashai/src/features/home/presentation/home_view.dart';
 import 'package:fashai/src/features/profile/presentation/profile_view.dart';
-import 'package:fashai/src/features/profile/presentation/style_preferences_view.dart';
 import 'package:fashai/src/features/styleAI/presentation/style_ai_view.dart';
 import 'package:fashai/src/features/wardrobe/presentation/wardrobe_view.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,6 +16,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
+  bool _cameraActive = false;
 
   final List<Widget> _pages = const [
     HomePage(),
@@ -23,6 +24,15 @@ class _MainPageState extends State<MainPage> {
     StyleAiPage(),
     ProfilePage(),
   ];
+
+  void _openCamera() async {
+    setState(() => _cameraActive = true);
+
+    final ImagePicker picker = ImagePicker();
+    await picker.pickImage(source: ImageSource.camera);
+
+    setState(() => _cameraActive = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +43,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  
-
   Widget _buildFloatingNavBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -44,7 +52,7 @@ class _MainPageState extends State<MainPage> {
         TSizes.defaultSpace,
       ),
       child: Container(
-        ////////////
+        clipBehavior: Clip.none,
         height: 64,
         padding: const EdgeInsets.all(TSizes.xs),
         decoration: BoxDecoration(
@@ -59,20 +67,21 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
             // Sliding coral pill
             AnimatedAlign(
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeInOut,
               alignment: _selectedIndex == 0
-                  ? Alignment.centerLeft
+                  ? const Alignment(-1.0, 0) // Home — en sol
                   : _selectedIndex == 1
-                  ? const Alignment(-0.33, 0)
+                  ? const Alignment(-0.5, 0) // Wardrobe
                   : _selectedIndex == 2
-                  ? const Alignment(0.33, 0)
-                  : Alignment.centerRight,
+                  ? const Alignment(0.5, 0) // Style AI
+                  : const Alignment(1.0, 0), // Profile — en sağ
               child: FractionallySizedBox(
-                widthFactor: 0.25,
+                widthFactor: 0.2,
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColors.coral,
@@ -84,7 +93,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
 
-            // Nav items on top of pill
+            // Nav items + camera
             Row(
               children: [
                 _buildNavItem(0, Icons.home_outlined, Icons.home, "Home"),
@@ -94,6 +103,52 @@ class _MainPageState extends State<MainPage> {
                   Icons.checkroom,
                   "Wardrobe",
                 ),
+
+                // Camera button
+                Expanded(
+                  child: GestureDetector(
+                    onTap: _openCamera,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          top: -13,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: _cameraActive ? 62 : 58,
+                            height: _cameraActive ? 62 : 58,
+                            decoration: BoxDecoration(
+                              color: _cameraActive
+                                  ? AppColors.dustyRose
+                                  : AppColors.coral,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.beige,
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.coral.withValues(
+                                    alpha: _cameraActive ? 0.6 : 0.4,
+                                  ),
+                                  blurRadius: _cameraActive ? 20 : 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: AppColors.white,
+                              size: TSizes.iconLg,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
                 _buildNavItem(
                   2,
                   Icons.auto_awesome_outlined,
@@ -122,6 +177,7 @@ class _MainPageState extends State<MainPage> {
         onTap: () => setState(() => _selectedIndex = index),
         child: Container(
           color: Colors.transparent,
+          height: 56,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

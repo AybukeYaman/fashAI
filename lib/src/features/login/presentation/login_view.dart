@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.topCenter,
                   children: [
                     ...previousChildren,
-                    if (currentChild != null) currentChild,
+                    ?currentChild,
                   ],
                 ),
                 transitionBuilder: (child, animation) =>

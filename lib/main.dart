@@ -6,7 +6,8 @@ import 'package:fashai/src/features/main/presentation/main_view.dart';
 import 'package:fashai/src/features/onboarding/presentation/your_ai_stylist_page.dart';
 import 'package:fashai/src/features/outfit/presentation/outfit_detail_view.dart';
 import 'package:fashai/src/features/profile/presentation/app_settings_view.dart';
-import 'package:fashai/src/features/profile/presentation/cycle_settings_view.dart';
+import 'package:fashai/src/features/profile/presentation/cycle/presentation/cycle_settings_view.dart';
+
 import 'package:fashai/src/features/profile/presentation/style_preferences_view.dart';
 import 'package:flutter/material.dart';
 

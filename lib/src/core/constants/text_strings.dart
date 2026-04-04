@@ -91,4 +91,13 @@ class Ttexts {
   static const String aiPick = "AI Pick";
   static const String wearThisOutfit = "Wear This Outfit";
   static const String saveForLater = "Save for Later";
+
+  // -- Cycle Settings
+  static const String cycleAwareMode = "Cycle-Aware Mode";
+  static const String comfortFocused = "Comfort-focused recommendations";
+  static const String todaysComfortPicks = "Today's Comfort Picks";
+  static const String dayPrefix = "Day";
+  static const String menstrual = "Menstrual";
+  static const String follicular = "Follicular";
+  static const String luteal = "Luteal";
 }
