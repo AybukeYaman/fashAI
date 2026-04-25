@@ -3,15 +3,18 @@ import 'package:fashai/src/core/constants/text_strings.dart';
 import 'package:fashai/src/core/routes/app_routes.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
 import 'package:fashai/src/core/utils/platform_utils.dart';
+import 'package:fashai/src/features/auth/providers/auth_providers.dart';
 import 'package:fashai/src/features/profile/data/profile_data.dart';
 import 'package:fashai/src/features/profile/presentation/profile_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ProfileModel profile = ProfileData.myProfile;
 
     return Scaffold(
@@ -135,8 +138,7 @@ class ProfilePage extends StatelessWidget {
                 icon: "🎨",
                 title: Ttexts.stylePreferences,
                 subtitle: Ttexts.stylePreferencesSubtitle,
-                onTap: () =>
-                    Navigator.pushNamed(context, AppRoutes.stylePreferences),
+                onTap: () => context.push(AppRoutes.stylePreferences),
               ),
               const SizedBox(height: TSizes.md),
               _buildSettingsRow(
@@ -144,8 +146,7 @@ class ProfilePage extends StatelessWidget {
                 icon: "🌸",
                 title: Ttexts.cycleSettings,
                 subtitle: Ttexts.cycleSettingsSubtitle,
-                onTap: () =>
-                    Navigator.pushNamed(context, AppRoutes.cycleSettings),
+                onTap: () => context.push(AppRoutes.cycleSettings),
               ),
               const SizedBox(height: TSizes.md),
               _buildSettingsRow(
@@ -153,8 +154,20 @@ class ProfilePage extends StatelessWidget {
                 icon: "⚙️",
                 title: Ttexts.appSettings,
                 subtitle: Ttexts.appSettingsSubtitle,
-                onTap: () =>
-                    Navigator.pushNamed(context, AppRoutes.appSettings),
+                onTap: () => context.push(AppRoutes.appSettings),
+              ),
+              const SizedBox(height: TSizes.md),
+              _buildSettingsRow(
+                context,
+                icon: "X",
+                title: 'Sign Out',
+                subtitle: 'End this session',
+                onTap: () async {
+                  await ref.read(authServiceProvider).signOut();
+                  if (context.mounted) {
+                    context.go(AppRoutes.login);
+                  }
+                },
               ),
 
               const SizedBox(height: TSizes.defaultSpace),
@@ -165,10 +178,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({
-    required String value,
-    required String label,
-  }) {
+  Widget _buildStatCard({required String value, required String label}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(

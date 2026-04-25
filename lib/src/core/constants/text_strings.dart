@@ -65,11 +65,10 @@ class Ttexts {
   static const String termsAndPrivacy =
       "By continuing, you agree to our Terms of Service and Privacy Policy";
   static const String orSignInWithGoogle = "Google";
-  static const String orSignInWithFacebook = "Facebook";
 
   // -- Profile Page
   static const String stylePreferences = "Style Preferences";
-  static const String sytlePre_AppBar = "How Dou You Want To Look";
+  static const String stylePreAppBar = "How Do You Want To Look";
   static const String stylePreferencesSubtitle =
       "Colors, aesthetics, body type";
   static const String cycleSettings = "Cycle Settings";

@@ -237,8 +237,6 @@ class _WardrobePageState extends State<WardrobePage> {
   }
 
   Widget _buildWardrobeCard(WardrobeItemModel item) {
-    final color = Color(int.parse(item.color.replaceAll('#', '0xFF')));
-
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,

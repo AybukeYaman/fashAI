@@ -6,6 +6,7 @@ import 'package:fashai/src/core/themes/app_colors.dart';
 import 'package:fashai/src/core/constants/sizes.dart';
 import 'package:fashai/src/core/constants/text_strings.dart';
 import 'package:fashai/src/features/home/presentation/home_model.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -340,28 +341,28 @@ class _HomePageState extends State<HomePage> {
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.06),
                         blurRadius: 8,
-                        offset:  Offset(0, 2),
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
                   child: Row(
                     children: [
                       Container(
-                        padding:  EdgeInsets.all(TSizes.md),
+                        padding: EdgeInsets.all(TSizes.md),
                         decoration: BoxDecoration(
                           color: AppColors.lightCoral,
                           borderRadius: BorderRadius.circular(
                             TSizes.borderRadiusSm,
                           ),
                         ),
-                        child:  Icon(
+                        child: Icon(
                           Icons.share_outlined,
                           color: AppColors.coral,
                           size: TSizes.iconMd,
                         ),
                       ),
-                       SizedBox(width: TSizes.md),
-                       Column(
+                      SizedBox(width: TSizes.md),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -414,11 +415,7 @@ class _HomePageState extends State<HomePage> {
     final tags = mockTags[outfit.id] ?? [];
 
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        AppRoutes.outfitDetail,
-        arguments: outfit,
-      ),
+      onTap: () => context.push(AppRoutes.outfitDetail, extra: outfit),
       child: Container(
         margin: const EdgeInsets.only(bottom: TSizes.spaceBtwItems),
         decoration: BoxDecoration(

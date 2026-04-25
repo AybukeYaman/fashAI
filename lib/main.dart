@@ -1,26 +1,23 @@
-import 'package:fashai/src/core/routes/app_routes.dart';
+import 'package:fashai/src/core/config/auth_bootstrap.dart';
+import 'package:fashai/src/core/routes/app_router.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
-import 'package:fashai/src/features/home/presentation/home_model.dart';
-import 'package:fashai/src/features/login/presentation/login_view.dart';
-import 'package:fashai/src/features/main/presentation/main_view.dart';
-import 'package:fashai/src/features/onboarding/presentation/your_ai_stylist_page.dart';
-import 'package:fashai/src/features/outfit/presentation/outfit_detail_view.dart';
-import 'package:fashai/src/features/profile/presentation/app_settings_view.dart';
-import 'package:fashai/src/features/profile/presentation/cycle/presentation/cycle_settings_view.dart';
-
-import 'package:fashai/src/features/profile/presentation/style_preferences_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthBootstrap.initialize();
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Combime',
       theme: ThemeData(
@@ -36,21 +33,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.system,
-      initialRoute: AppRoutes.onboarding,
-      routes: {
-        AppRoutes.onboarding: (context) => const YourAiStylistPage(),
-        AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.home: (context) => const MainPage(),
-        AppRoutes.main: (context) => const MainPage(),
-        AppRoutes.stylePreferences: (context) => StylePreferencesPage(),
-        AppRoutes.cycleSettings: (context) => const CycleSettingsPage(),
-        AppRoutes.appSettings: (context) => const AppSettingsPage(),
-        AppRoutes.outfitDetail: (context) {
-          final outfit =
-              ModalRoute.of(context)!.settings.arguments as OutfitModel;
-          return OutfitDetailPage(outfit: outfit);
-        },
-      },
+      routerConfig: router,
     );
   }
 }

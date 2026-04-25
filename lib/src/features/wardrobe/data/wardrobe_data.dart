@@ -8,7 +8,8 @@ class WardrobeData {
       category: "Tops",
       color: "#F5F0E8",
       brand: "Zara",
-      imageUrl: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=300",
     ),
     WardrobeItemModel(
       id: "2",
@@ -16,7 +17,8 @@ class WardrobeData {
       category: "Tops",
       color: "#FFFFFF",
       brand: "H&M",
-      imageUrl: "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=300",
     ),
     WardrobeItemModel(
       id: "3",
@@ -25,7 +27,8 @@ class WardrobeData {
       color: "#1B2A4A",
       brand: "Mango",
       isFavorite: true,
-      imageUrl: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300",
     ),
     WardrobeItemModel(
       id: "4",
@@ -33,7 +36,8 @@ class WardrobeData {
       category: "Bottoms",
       color: "#1A1A1A",
       brand: "Zara",
-      imageUrl: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=300",
     ),
     WardrobeItemModel(
       id: "5",
@@ -42,7 +46,8 @@ class WardrobeData {
       color: "#C0392B",
       brand: "H&M",
       isFavorite: true,
-      imageUrl: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=300",
     ),
     WardrobeItemModel(
       id: "6",
@@ -50,7 +55,8 @@ class WardrobeData {
       category: "Dresses",
       color: "#F5C6D0",
       brand: "Mango",
-      imageUrl: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300",
     ),
     WardrobeItemModel(
       id: "7",
@@ -59,7 +65,8 @@ class WardrobeData {
       color: "#8B7355",
       brand: "Massimo Dutti",
       isFavorite: true,
-      imageUrl: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=300",
     ),
     WardrobeItemModel(
       id: "8",
@@ -67,7 +74,8 @@ class WardrobeData {
       category: "Outerwear",
       color: "#4A6FA5",
       brand: "Levi's",
-      imageUrl: "https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=300",
     ),
     WardrobeItemModel(
       id: "9",
@@ -75,7 +83,8 @@ class WardrobeData {
       category: "Tops",
       color: "#D4C5A9",
       brand: "Uniqlo",
-      imageUrl: "https://images.unsplash.com/photo-1621184455862-c163dfb30e0f?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1621184455862-c163dfb30e0f?w=300",
     ),
     WardrobeItemModel(
       id: "10",
@@ -83,7 +92,8 @@ class WardrobeData {
       category: "Bottoms",
       color: "#2C3E50",
       brand: "Levi's",
-      imageUrl: "https://images.unsplash.com/photo-1475178626620-a4d074967452?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1475178626620-a4d074967452?w=300",
     ),
     WardrobeItemModel(
       id: "11",
@@ -91,7 +101,8 @@ class WardrobeData {
       category: "Outerwear",
       color: "#1A1A1A",
       brand: "Zara",
-      imageUrl: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300",
     ),
     WardrobeItemModel(
       id: "12",
@@ -100,7 +111,8 @@ class WardrobeData {
       color: "#E8D5B7",
       brand: "Massimo Dutti",
       isFavorite: true,
-      imageUrl: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=300",
+      imageUrl:
+          "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=300",
     ),
   ];
 }

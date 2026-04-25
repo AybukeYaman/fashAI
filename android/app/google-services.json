@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "536587697190",
+    "project_id": "fashai-80d35",
+    "storage_bucket": "fashai-80d35.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536587697190:android:ca38d1da6d33bd797f3ae7",
+        "android_client_info": {
+          "package_name": "com.example.fashai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwa-GatuXrtsRM7gZozKNuJjNAI-zKE8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

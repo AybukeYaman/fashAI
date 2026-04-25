@@ -207,7 +207,7 @@ class _CycleSettingsPageState extends State<CycleSettingsPage> {
       children: [
         Container(
           width: TSizes.sm * 2 + TSizes.xs,
-height: TSizes.sm * 2 + TSizes.xs,
+          height: TSizes.sm * 2 + TSizes.xs,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: TSizes.sm),
@@ -247,7 +247,10 @@ height: TSizes.sm * 2 + TSizes.xs,
               borderRadius: BorderRadius.circular(TSizes.borderRadiusMd),
             ),
             child: Center(
-              child: Text(pick.icon, style: const TextStyle(fontSize: TSizes.iconLg - TSizes.xs)),
+              child: Text(
+                pick.icon,
+                style: const TextStyle(fontSize: TSizes.iconLg - TSizes.xs),
+              ),
             ),
           ),
           const SizedBox(width: TSizes.md),

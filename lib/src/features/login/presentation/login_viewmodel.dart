@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class LoginViewModel {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController forgotPasswordController =
       TextEditingController();
@@ -14,6 +16,7 @@ class LoginViewModel {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     fullNameController.dispose();
     forgotPasswordController.dispose();
   }

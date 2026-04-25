@@ -4,21 +4,39 @@ import 'package:fashai/src/core/constants/text_strings.dart';
 import 'package:fashai/src/core/routes/app_routes.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
 import 'package:fashai/src/core/utils/platform_utils.dart';
+import 'package:fashai/src/features/auth/providers/auth_providers.dart';
 import 'package:fashai/src/features/login/presentation/login_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+enum LoginMode { login, signUp }
+
+class LoginPage extends ConsumerStatefulWidget {
+  const LoginPage({super.key, this.initialMode = LoginMode.login});
+
+  final LoginMode initialMode;
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final LoginViewModel _viewModel = LoginViewModel();
   bool _isLogin = true;
   bool _showForgotPassword = false;
+  bool _isLoading = false;
+  bool _obscureLoginPassword = true;
+  bool _obscureSignUpPassword = true;
+  bool _obscureConfirmPassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLogin = widget.initialMode == LoginMode.login;
+  }
 
   @override
   void dispose() {
@@ -178,10 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                 duration: const Duration(milliseconds: 300),
                 layoutBuilder: (currentChild, previousChildren) => Stack(
                   alignment: Alignment.topCenter,
-                  children: [
-                    ...previousChildren,
-                    ?currentChild,
-                  ],
+                  children: [...previousChildren, ?currentChild],
                 ),
                 transitionBuilder: (child, animation) =>
                     FadeTransition(opacity: animation, child: child),
@@ -247,10 +262,15 @@ class _LoginPageState extends State<LoginPage> {
           _buildTextField(
             controller: _viewModel.passwordController,
             hint: Ttexts.enterYourPassword,
-            obscure: true,
-            suffixIcon: const Icon(
-              Iconsax.eye_slash,
-              color: AppColors.warmGray,
+            obscure: _obscureLoginPassword,
+            suffixIcon: IconButton(
+              onPressed: () => setState(
+                () => _obscureLoginPassword = !_obscureLoginPassword,
+              ),
+              icon: Icon(
+                _obscureLoginPassword ? Iconsax.eye_slash : Iconsax.eye,
+                color: AppColors.warmGray,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -318,11 +338,14 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_viewModel.forgotFormKey.currentState!.validate()) {
-                          // send reset link logic
-                        }
-                      },
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              if (_viewModel.forgotFormKey.currentState!
+                                  .validate()) {
+                                _sendPasswordReset();
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.dustyRose,
                         foregroundColor: AppColors.white,
@@ -353,11 +376,13 @@ class _LoginPageState extends State<LoginPage> {
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: () {
-                if (_viewModel.loginFormKey.currentState!.validate()) {
-                  Navigator.pushNamed(context, AppRoutes.main);
-                }
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      if (_viewModel.loginFormKey.currentState!.validate()) {
+                        _signInWithEmail();
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.coral,
                 foregroundColor: AppColors.white,
@@ -367,7 +392,7 @@ class _LoginPageState extends State<LoginPage> {
                 elevation: 0,
               ),
               child: Text(
-                Ttexts.logIn,
+                _isLoading ? 'Signing in...' : Ttexts.logIn,
                 style: const TextStyle(
                   fontSize: TSizes.fontSizeMD,
                   fontWeight: FontWeight.w600,
@@ -454,10 +479,16 @@ class _LoginPageState extends State<LoginPage> {
           _buildTextField(
             controller: _viewModel.passwordController,
             hint: Ttexts.enterYourPassword,
-            obscure: true,
-            suffixIcon: const Icon(
-              Iconsax.eye_slash,
-              color: AppColors.warmGray,
+            obscure: _obscureSignUpPassword,
+            onChanged: (_) => setState(() {}),
+            suffixIcon: IconButton(
+              onPressed: () => setState(
+                () => _obscureSignUpPassword = !_obscureSignUpPassword,
+              ),
+              icon: Icon(
+                _obscureSignUpPassword ? Iconsax.eye_slash : Iconsax.eye,
+                color: AppColors.warmGray,
+              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -469,6 +500,42 @@ class _LoginPageState extends State<LoginPage> {
               return null;
             },
           ),
+          const SizedBox(height: TSizes.sm),
+          _buildPasswordStrength(),
+          const SizedBox(height: TSizes.spaceBtwInputFields),
+
+          const Text(
+            'Confirm Password',
+            style: TextStyle(
+              color: AppColors.charcoal,
+              fontSize: TSizes.fontSizeSM,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: TSizes.sm),
+          _buildTextField(
+            controller: _viewModel.confirmPasswordController,
+            hint: 'Confirm your password',
+            obscure: _obscureConfirmPassword,
+            suffixIcon: IconButton(
+              onPressed: () => setState(
+                () => _obscureConfirmPassword = !_obscureConfirmPassword,
+              ),
+              icon: Icon(
+                _obscureConfirmPassword ? Iconsax.eye_slash : Iconsax.eye,
+                color: AppColors.warmGray,
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please confirm your password';
+              }
+              if (value != _viewModel.passwordController.text) {
+                return 'Passwords do not match';
+              }
+              return null;
+            },
+          ),
           const SizedBox(height: TSizes.spaceBtwSections),
 
           // Sign Up button
@@ -476,11 +543,13 @@ class _LoginPageState extends State<LoginPage> {
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: () {
-                if (_viewModel.signUpFormKey.currentState!.validate()) {
-                  Navigator.pushNamed(context, AppRoutes.main);
-                }
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      if (_viewModel.signUpFormKey.currentState!.validate()) {
+                        _signUpWithEmail();
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.coral,
                 foregroundColor: AppColors.white,
@@ -490,7 +559,7 @@ class _LoginPageState extends State<LoginPage> {
                 elevation: 0,
               ),
               child: Text(
-                Ttexts.signUp,
+                _isLoading ? 'Creating account...' : Ttexts.signUp,
                 style: const TextStyle(
                   fontSize: TSizes.fontSizeMD,
                   fontWeight: FontWeight.w600,
@@ -515,11 +584,13 @@ class _LoginPageState extends State<LoginPage> {
     bool obscure = false,
     Widget? suffixIcon,
     String? Function(String?)? validator,
+    ValueChanged<String>? onChanged,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscure,
+      onChanged: onChanged,
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
@@ -576,7 +647,11 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.pushNamed(context, AppRoutes.main),
+                onPressed: _isLoading
+                    ? null
+                    : () => _runAuthAction(
+                        () => ref.read(authServiceProvider).signInWithGoogle(),
+                      ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: TSizes.lg),
                   side: const BorderSide(color: AppColors.grey),
@@ -599,25 +674,32 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(width: TSizes.spaceBtwItems),
+          ],
+        ),
+        const SizedBox(height: TSizes.spaceBtwItems),
+        Row(
+          children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.pushNamed(context, AppRoutes.main),
+                onPressed: _isLoading
+                    ? null
+                    : () => _runAuthAction(
+                        () => ref.read(authServiceProvider).signInWithX(),
+                      ),
                 style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: TSizes.lg),
-                  side: BorderSide(color: AppColors.grey),
+                  padding: const EdgeInsets.symmetric(vertical: TSizes.lg),
+                  side: const BorderSide(color: AppColors.grey),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(TSizes.borderRadiusMd),
                   ),
                   backgroundColor: AppColors.white,
                 ),
-                icon: Image(
-                  width: TSizes.iconMd,
-                  height: TSizes.iconMd,
-                  image: AssetImage(TImages.facebook),
+                icon: const Icon(
+                  Icons.alternate_email,
+                  color: AppColors.charcoal,
                 ),
-                label: Text(
-                  Ttexts.orSignInWithFacebook,
+                label: const Text(
+                  'X',
                   style: TextStyle(
                     color: AppColors.charcoal,
                     fontSize: TSizes.fontSizeSM,
@@ -625,6 +707,39 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            const SizedBox(width: TSizes.spaceBtwItems),
+            if (kIsWeb ||
+                defaultTargetPlatform == TargetPlatform.iOS ||
+                defaultTargetPlatform == TargetPlatform.macOS)
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _isLoading
+                      ? null
+                      : () => _runAuthAction(
+                          () => ref.read(authServiceProvider).signInWithApple(),
+                        ),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: TSizes.lg),
+                    side: const BorderSide(color: AppColors.grey),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        TSizes.borderRadiusMd,
+                      ),
+                    ),
+                    backgroundColor: AppColors.white,
+                  ),
+                  icon: const Icon(Icons.apple, color: AppColors.charcoal),
+                  label: const Text(
+                    'Apple',
+                    style: TextStyle(
+                      color: AppColors.charcoal,
+                      fontSize: TSizes.fontSizeSM,
+                    ),
+                  ),
+                ),
+              )
+            else
+              const Spacer(),
           ],
         ),
       ],
@@ -641,5 +756,128 @@ class _LoginPageState extends State<LoginPage> {
         fontFamily: PlatformUtils.bodyFont(context),
       ),
     );
+  }
+
+  Widget _buildPasswordStrength() {
+    final password = _viewModel.passwordController.text;
+    final score = _passwordScore(password);
+    final color = switch (score) {
+      <= 1 => Colors.redAccent,
+      2 => Colors.orange,
+      3 => Colors.amber,
+      _ => Colors.green,
+    };
+    final label = switch (score) {
+      0 => 'Password strength',
+      1 => 'Weak',
+      2 => 'Fair',
+      3 => 'Good',
+      _ => 'Strong',
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LinearProgressIndicator(
+          value: score == 0 ? 0.05 : score / 4,
+          color: color,
+          backgroundColor: AppColors.grey,
+          minHeight: 6,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        const SizedBox(height: TSizes.xs),
+        Text(
+          label,
+          style: TextStyle(
+            color: score == 0 ? AppColors.warmGray : color,
+            fontSize: TSizes.fontSizeXS,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  int _passwordScore(String password) {
+    var score = 0;
+    if (password.length >= 8) score++;
+    if (RegExp(r'[A-Z]').hasMatch(password)) score++;
+    if (RegExp(r'[0-9]').hasMatch(password)) score++;
+    if (RegExp(r'[^A-Za-z0-9]').hasMatch(password)) score++;
+    return score;
+  }
+
+  Future<void> _signInWithEmail() {
+    return _runAuthAction(
+      () => ref
+          .read(authServiceProvider)
+          .signInWithEmail(
+            _viewModel.emailController.text,
+            _viewModel.passwordController.text,
+          ),
+    );
+  }
+
+  Future<void> _signUpWithEmail() {
+    return _runAuthAction(
+      () => ref
+          .read(authServiceProvider)
+          .signUpWithEmail(
+            _viewModel.emailController.text,
+            _viewModel.passwordController.text,
+            displayName: _viewModel.fullNameController.text,
+          ),
+      success: 'Account created. Check your email to verify it.',
+    );
+  }
+
+  Future<void> _sendPasswordReset() async {
+    await _runAuthAction(
+      () => ref
+          .read(authServiceProvider)
+          .sendPasswordResetEmail(_viewModel.forgotPasswordController.text),
+      success: 'Password reset email sent.',
+      navigate: false,
+    );
+  }
+
+  Future<void> _runAuthAction(
+    Future<Object?> Function() action, {
+    String? success,
+    bool navigate = true,
+  }) async {
+    setState(() => _isLoading = true);
+    try {
+      final result = await action();
+      if (result == null) {
+        return;
+      }
+      ref.invalidate(authStateProvider);
+      if (success != null && mounted) {
+        _showSnack(success);
+      }
+      if (navigate && mounted) {
+        final user = ref.read(authServiceProvider).currentUser;
+        context.go(
+          user != null && !user.emailVerified
+              ? AppRoutes.verifyEmail
+              : AppRoutes.home,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        _showSnack(ref.read(authServiceProvider).messageForError(error));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }

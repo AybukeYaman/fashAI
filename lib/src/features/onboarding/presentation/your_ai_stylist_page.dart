@@ -1,17 +1,21 @@
 import 'package:fashai/src/core/constants/sizes.dart';
+import 'package:fashai/src/core/providers/shared_preferences_provider.dart';
 import 'package:fashai/src/core/routes/app_routes.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
 import 'package:fashai/src/core/utils/platform_utils.dart';
+import 'package:fashai/src/features/auth/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class YourAiStylistPage extends StatefulWidget {
+class YourAiStylistPage extends ConsumerStatefulWidget {
   const YourAiStylistPage({super.key});
 
   @override
-  State<YourAiStylistPage> createState() => _YourAiStylistPageState();
+  ConsumerState<YourAiStylistPage> createState() => _YourAiStylistPageState();
 }
 
-class _YourAiStylistPageState extends State<YourAiStylistPage> {
+class _YourAiStylistPageState extends ConsumerState<YourAiStylistPage> {
   @override
   Widget build(BuildContext context) {
     final deviceOrientation = MediaQuery.of(context).orientation;
@@ -21,9 +25,7 @@ class _YourAiStylistPageState extends State<YourAiStylistPage> {
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(gradient: AppColors.heroGradient),
-        child: deviceOrientation == Orientation.portrait
-            ? myColumn()
-            : myRow(),
+        child: deviceOrientation == Orientation.portrait ? myColumn() : myRow(),
       ),
     );
   }
@@ -40,7 +42,7 @@ class _YourAiStylistPageState extends State<YourAiStylistPage> {
         ),
         sliderContainer(0.05, 0.05),
         GestureDetector(
-          onTap: () => Navigator.pushNamed(context, AppRoutes.login),
+          onTap: _completeOnboarding,
           child: _getStartedButton(
             height: MediaQuery.of(context).size.height * 0.09,
             width: MediaQuery.of(context).size.width * 0.8,
@@ -70,7 +72,7 @@ class _YourAiStylistPageState extends State<YourAiStylistPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () => Navigator.pushNamed(context, AppRoutes.login),
+              onTap: _completeOnboarding,
               child: _getStartedButton(
                 height: MediaQuery.of(context).size.height * 0.15,
                 width: MediaQuery.of(context).size.width * 0.25,
@@ -121,7 +123,7 @@ class _YourAiStylistPageState extends State<YourAiStylistPage> {
 
   GestureDetector accountTextSizedBox(double sH, double sW) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, AppRoutes.login),
+      onTap: _completeOnboarding,
       child: SizedBox(
         height: MediaQuery.of(context).size.height * sH,
         width: MediaQuery.of(context).size.width * sW,
@@ -215,5 +217,14 @@ class _YourAiStylistPageState extends State<YourAiStylistPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _completeOnboarding() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setBool('has_seen_onboarding', true);
+    ref.invalidate(hasSeenOnboardingProvider);
+    if (mounted) {
+      context.go(AppRoutes.login);
+    }
   }
 }
