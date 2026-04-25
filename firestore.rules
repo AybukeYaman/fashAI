@@ -1,0 +1,498 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function currentUserPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function isPro() {
+      return isAuthenticated()
+        && exists(currentUserPath())
+        && get(currentUserPath()).data.get('subscription', {}).get('isPro', false) == true
+        && get(currentUserPath()).data.get('subscription', {}).get('status', 'free') in ['active', 'trialing'];
+    }
+
+    function hasConsent(field) {
+      return isAuthenticated()
+        && exists(currentUserPath())
+        && get(currentUserPath()).data.get('consents', {}).get(field, false) == true;
+    }
+
+    function optionalString(data, field) {
+      return !(field in data) || data[field] == null || data[field] is string;
+    }
+
+    function optionalBool(data, field) {
+      return !(field in data) || data[field] == null || data[field] is bool;
+    }
+
+    function optionalInt(data, field) {
+      return !(field in data) || data[field] == null || data[field] is int;
+    }
+
+    function optionalNumber(data, field) {
+      return !(field in data) || data[field] == null || data[field] is number;
+    }
+
+    function optionalTimestamp(data, field) {
+      return !(field in data) || data[field] == null || data[field] is timestamp;
+    }
+
+    function optionalList(data, field) {
+      return !(field in data) || data[field] == null || data[field] is list;
+    }
+
+    function optionalMap(data, field) {
+      return !(field in data) || data[field] == null || data[field] is map;
+    }
+
+    function userClientCreateFields() {
+      return [
+        'uid',
+        'displayName',
+        'email',
+        'photoUrl',
+        'locale',
+        'timezone',
+        'birthYear',
+        'gender',
+        'stylePreferences',
+        'colorAnalysis',
+        'consents',
+        'notificationSettings',
+        'createdAt',
+        'updatedAt',
+        'lastActiveAt'
+      ];
+    }
+
+    function userClientUpdateFields() {
+      return [
+        'displayName',
+        'photoUrl',
+        'locale',
+        'timezone',
+        'birthYear',
+        'gender',
+        'stylePreferences',
+        'colorAnalysis',
+        'consents',
+        'notificationSettings',
+        'updatedAt',
+        'lastActiveAt'
+      ];
+    }
+
+    function isValidConsents(data) {
+      return !('consents' in data)
+        || (
+          data.consents is map
+          && data.consents.keys().hasOnly([
+            'cycleSync',
+            'calendarSync',
+            'personalization',
+            'marketing',
+            'affiliateTracking',
+            'notifications'
+          ])
+          && optionalBool(data.consents, 'cycleSync')
+          && optionalBool(data.consents, 'calendarSync')
+          && optionalBool(data.consents, 'personalization')
+          && optionalBool(data.consents, 'marketing')
+          && optionalBool(data.consents, 'affiliateTracking')
+          && optionalBool(data.consents, 'notifications')
+        );
+    }
+
+    function isValidUserProfileTypes(data, uid) {
+      return (!('uid' in data) || data.uid == uid)
+        && optionalString(data, 'displayName')
+        && optionalString(data, 'email')
+        && optionalString(data, 'photoUrl')
+        && optionalString(data, 'locale')
+        && optionalString(data, 'timezone')
+        && optionalInt(data, 'birthYear')
+        && optionalString(data, 'gender')
+        && optionalList(data, 'stylePreferences')
+        && optionalMap(data, 'colorAnalysis')
+        && optionalMap(data, 'notificationSettings')
+        && optionalTimestamp(data, 'createdAt')
+        && optionalTimestamp(data, 'updatedAt')
+        && optionalTimestamp(data, 'lastActiveAt')
+        && isValidConsents(data);
+    }
+
+    function isValidUserProfileCreate(uid) {
+      let data = request.resource.data;
+      return data.keys().hasOnly(userClientCreateFields())
+        && data.keys().hasAll(['uid', 'createdAt', 'updatedAt'])
+        && isValidUserProfileTypes(data, uid);
+    }
+
+    function isValidUserProfileUpdate(uid) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.hasOnly(userClientUpdateFields())
+        && isValidUserProfileTypes(request.resource.data, uid)
+        && (!('createdAt' in resource.data) || request.resource.data.createdAt == resource.data.createdAt);
+    }
+
+    function wardrobeItemFields() {
+      return [
+        'name',
+        'category',
+        'colors',
+        'tags',
+        'imageUrl',
+        'storagePath',
+        'brand',
+        'size',
+        'material',
+        'season',
+        'notes',
+        'detectedLabels',
+        'detectionConfidence',
+        'wearCount',
+        'lastWornAt',
+        'isFavorite',
+        'isArchived',
+        'createdAt',
+        'updatedAt'
+      ];
+    }
+
+    function isValidWardrobeItem() {
+      let data = request.resource.data;
+      return data.keys().hasOnly(wardrobeItemFields())
+        && data.keys().hasAll([
+          'name',
+          'category',
+          'colors',
+          'tags',
+          'imageUrl',
+          'storagePath',
+          'wearCount',
+          'isFavorite',
+          'isArchived',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.name is string
+        && data.name.size() > 0
+        && data.name.size() <= 120
+        && data.category is string
+        && data.category.size() > 0
+        && data.category.size() <= 64
+        && data.colors is list
+        && data.colors.size() > 0
+        && data.colors.size() <= 8
+        && data.tags is list
+        && data.tags.size() <= 30
+        && data.imageUrl is string
+        && data.imageUrl.size() > 0
+        && data.storagePath is string
+        && data.storagePath.size() > 0
+        && optionalString(data, 'brand')
+        && optionalString(data, 'size')
+        && optionalString(data, 'material')
+        && optionalString(data, 'season')
+        && optionalString(data, 'notes')
+        && optionalList(data, 'detectedLabels')
+        && optionalNumber(data, 'detectionConfidence')
+        && data.wearCount is int
+        && data.wearCount >= 0
+        && optionalTimestamp(data, 'lastWornAt')
+        && data.isFavorite is bool
+        && data.isArchived is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function outfitFields() {
+      return [
+        'title',
+        'description',
+        'occasion',
+        'wardrobeSnapshots',
+        'itemIds',
+        'imageUrl',
+        'reason',
+        'sourceRecommendationId',
+        'localDate',
+        'wornAt',
+        'isFavorite',
+        'isArchived',
+        'createdAt',
+        'updatedAt'
+      ];
+    }
+
+    function isValidOutfit() {
+      let data = request.resource.data;
+      return data.keys().hasOnly(outfitFields())
+        && data.keys().hasAll(['title', 'wardrobeSnapshots', 'itemIds', 'isFavorite', 'isArchived', 'createdAt', 'updatedAt'])
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() <= 140
+        && optionalString(data, 'description')
+        && optionalString(data, 'occasion')
+        && data.wardrobeSnapshots is list
+        && data.wardrobeSnapshots.size() > 0
+        && data.wardrobeSnapshots.size() <= 12
+        && data.itemIds is list
+        && data.itemIds.size() > 0
+        && data.itemIds.size() <= 12
+        && optionalString(data, 'imageUrl')
+        && optionalString(data, 'reason')
+        && optionalString(data, 'sourceRecommendationId')
+        && optionalString(data, 'localDate')
+        && optionalTimestamp(data, 'wornAt')
+        && data.isFavorite is bool
+        && data.isArchived is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidFeedback(uid) {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'userId',
+          'outfitId',
+          'recommendationId',
+          'recommendationDate',
+          'rating',
+          'woreIt',
+          'selectedItemIds',
+          'notes',
+          'source',
+          'createdAt'
+        ])
+        && data.keys().hasAll(['outfitId', 'rating', 'woreIt', 'createdAt'])
+        && (!('userId' in data) || data.userId == uid)
+        && data.outfitId is string
+        && data.outfitId.size() > 0
+        && optionalString(data, 'recommendationId')
+        && optionalString(data, 'recommendationDate')
+        && data.rating is int
+        && data.rating >= 1
+        && data.rating <= 5
+        && data.woreIt is bool
+        && optionalList(data, 'selectedItemIds')
+        && optionalString(data, 'notes')
+        && optionalString(data, 'source')
+        && data.createdAt is timestamp;
+    }
+
+    function isValidCalendarEvent() {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'calendarId',
+          'externalEventId',
+          'title',
+          'eventType',
+          'startAt',
+          'endAt',
+          'isAllDay',
+          'locationLabel',
+          'source',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasAll(['eventType', 'startAt', 'endAt', 'isAllDay', 'source', 'createdAt', 'updatedAt'])
+        && optionalString(data, 'calendarId')
+        && optionalString(data, 'externalEventId')
+        && optionalString(data, 'title')
+        && data.eventType is string
+        && data.startAt is timestamp
+        && data.endAt is timestamp
+        && data.isAllDay is bool
+        && optionalString(data, 'locationLabel')
+        && data.source is string
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidNotificationReadUpdate() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['isRead', 'readAt', 'updatedAt'])
+        && optionalBool(request.resource.data, 'isRead')
+        && optionalTimestamp(request.resource.data, 'readAt')
+        && optionalTimestamp(request.resource.data, 'updatedAt')
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    function isValidCyclePhaseSync() {
+      let data = request.resource.data;
+      return data.keys().hasOnly(['phase', 'syncedAt', 'updatedAt', 'consentVersion', 'source'])
+        && data.keys().hasAll(['phase', 'syncedAt', 'updatedAt'])
+        && data.phase in ['menstrual', 'follicular', 'ovulation', 'luteal']
+        && data.syncedAt is timestamp
+        && data.updatedAt is timestamp
+        && optionalString(data, 'consentVersion')
+        && optionalString(data, 'source');
+    }
+
+    function isValidChallengeSubmission() {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'userId',
+          'outfitId',
+          'outfitSnapshot',
+          'caption',
+          'photoUrl',
+          'score',
+          'voteCount',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasAll(['userId', 'outfitSnapshot', 'createdAt', 'updatedAt'])
+        && data.userId == request.auth.uid
+        && optionalString(data, 'outfitId')
+        && data.outfitSnapshot is map
+        && optionalString(data, 'caption')
+        && optionalString(data, 'photoUrl')
+        && (!('score' in data) || data.score == 0)
+        && (!('voteCount' in data) || data.voteCount == 0)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAffiliateClick() {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'userId',
+          'brandId',
+          'capsuleCollectionId',
+          'itemId',
+          'targetUrl',
+          'utm',
+          'deviceLocale',
+          'createdAt'
+        ])
+        && data.keys().hasAll(['userId', 'brandId', 'targetUrl', 'createdAt'])
+        && data.userId == request.auth.uid
+        && data.brandId is string
+        && optionalString(data, 'capsuleCollectionId')
+        && optionalString(data, 'itemId')
+        && data.targetUrl is string
+        && optionalMap(data, 'utm')
+        && optionalString(data, 'deviceLocale')
+        && data.createdAt is timestamp;
+    }
+
+    // User profile is readable only by the owner; subscription and aggregates are server-managed.
+    match /users/{uid} {
+      allow get: if isOwner(uid);
+      allow list: if false;
+      allow create: if isOwner(uid) && isValidUserProfileCreate(uid);
+      allow update: if isOwner(uid) && isValidUserProfileUpdate(uid);
+      allow delete: if false;
+
+      // Wardrobe items are private user data with validated client writes.
+      match /wardrobe/{itemId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && isValidWardrobeItem();
+        allow update: if isOwner(uid) && isValidWardrobeItem() && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isOwner(uid);
+      }
+
+      // Saved outfits are private and may embed wardrobe snapshots for history.
+      match /outfits/{outfitId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && isValidOutfit();
+        allow update: if isOwner(uid) && isValidOutfit() && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isOwner(uid);
+      }
+
+      // Daily recommendations are generated by trusted backend code; clients only read them.
+      match /recommendations/{dateKey} {
+        allow read: if isOwner(uid);
+        allow write: if false;
+      }
+
+      // Feedback is an append-only audit trail for recommender training.
+      match /feedback/{feedbackId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && isValidFeedback(uid);
+        allow update, delete: if false;
+      }
+
+      // Calendar cache is Pro-only and requires explicit calendar sync consent.
+      match /calendar_cache/{eventId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isPro() && hasConsent('calendarSync') && isValidCalendarEvent();
+        allow delete: if isOwner(uid);
+      }
+
+      // Notifications are backend-created; clients may only mark/read-manage their own inbox.
+      match /notifications/{notificationId} {
+        allow read: if isOwner(uid);
+        allow create: if false;
+        allow update: if isOwner(uid) && isValidNotificationReadUpdate();
+        allow delete: if isOwner(uid);
+      }
+
+      // Sensitive opt-in sync stores only the current phase label, never raw cycle logs.
+      match /private/{docId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && docId == 'cycle_phase' && hasConsent('cycleSync') && isValidCyclePhaseSync();
+        allow delete: if isOwner(uid);
+      }
+    }
+
+    // Trends are public catalogue data maintained by backend/admin tooling.
+    match /trends/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Brand metadata is public-read and backend/admin writable only.
+    match /brands/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Capsule collections are public-read and backend/admin writable only.
+    match /capsule_collections/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Style challenge definitions are public-read and backend/admin writable only.
+    match /style_challenges/{challengeId} {
+      allow read: if true;
+      allow write: if false;
+
+      // Challenge submissions are public-read; authenticated users can create their own entry.
+      match /submissions/{submissionId} {
+        allow read: if true;
+        allow create: if isAuthenticated() && isValidChallengeSubmission();
+        allow update, delete: if false;
+      }
+    }
+
+    // Affiliate clicks are client-created analytics events; they are not readable from clients.
+    match /affiliate_clicks/{clickId} {
+      allow create: if isAuthenticated() && hasConsent('affiliateTracking') && isValidAffiliateClick();
+      allow read, update, delete: if false;
+    }
+
+    // Recommender training signals are backend-only.
+    match /training_signals/{document=**} {
+      allow read, write: if false;
+    }
+
+    // Default deny keeps newly added collections private until explicitly ruled.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

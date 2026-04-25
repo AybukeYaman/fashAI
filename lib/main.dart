@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashai/src/core/config/auth_bootstrap.dart';
 import 'package:fashai/src/core/routes/app_router.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
@@ -7,6 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthBootstrap.initialize();
+  if (AuthBootstrap.firebaseReady) {
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+  }
   runApp(const ProviderScope(child: MyApp()));
 }
 

@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isValidUserObjectWrite() {
+      return request.resource == null
+        || (
+          request.resource.size <= 10 * 1024 * 1024
+          && request.resource.contentType.matches('image/.*')
+        );
+    }
+
+    // User media follows the Firestore ownership model: private per-user subtree.
+    match /users/{uid}/{allPaths=**} {
+      allow read: if isOwner(uid);
+      allow write: if isOwner(uid) && isValidUserObjectWrite();
+    }
+
+    // Capsule collection assets are public-read and backend/admin writable only.
+    match /capsule_collections/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Brand assets are public-read and backend/admin writable only.
+    match /brands/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Default deny for all other storage paths.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

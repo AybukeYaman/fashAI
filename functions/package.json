@@ -1,0 +1,29 @@
+{
+  "name": "combime-functions",
+  "description": "Cloud Functions for combime Firestore automation",
+  "private": true,
+  "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "^7.2.5",
+    "nodemailer": "^8.0.6"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0",
+    "@types/node": "^25.6.0",
+    "@types/nodemailer": "^8.0.0",
+    "typescript": "^6.0.3"
+  }
+}
