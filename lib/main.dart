@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashai/src/core/config/auth_bootstrap.dart';
+import 'package:fashai/src/core/config/revenuecat_bootstrap.dart';
 import 'package:fashai/src/core/routes/app_router.dart';
 import 'package:fashai/src/core/themes/app_colors.dart';
+import 'package:fashai/src/features/auth/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthBootstrap.initialize();
+  await RevenueCatBootstrap.initialize();
   if (AuthBootstrap.firebaseReady) {
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: true,
@@ -22,6 +25,10 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(authStateProvider, (_, next) {
+      next.whenData((user) => RevenueCatBootstrap.syncAppUserId(user?.uid));
+    });
+
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
